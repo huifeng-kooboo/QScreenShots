@@ -25,10 +25,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        Utils/filemanager.cpp \
+        Utils/log.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
+        Utils/filemanager.h \
+        Utils/log.h \
         mainwindow.h
 
 FORMS += \

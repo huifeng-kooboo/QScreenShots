@@ -4,12 +4,15 @@
 #include <QWindow>
 #include <QLabel>
 #include <qfiledialog.h>
+#include "Utils/log.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    Init();
     InitSlots();
 }
 
@@ -22,6 +25,11 @@ MainWindow::~MainWindow()
 void MainWindow::InitSlots()
 {
     QObject::connect(ui->btn_ScreenAll,SIGNAL(clicked()),this,SLOT(Slots_ScreenAll()));
+}
+
+void MainWindow::Init()
+{
+    Log::GetInstace().SetLogName("sas",true);
 }
 
 void MainWindow::Slots_ScreenAll()

@@ -20,6 +20,9 @@ public:
     // 信号与槽绑定
     void InitSlots();
 
+    // 初始化
+    void Init();
+
 public slots:
     // 截取全图
     void Slots_ScreenAll();
