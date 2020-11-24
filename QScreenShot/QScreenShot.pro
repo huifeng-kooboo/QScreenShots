@@ -25,14 +25,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        HttpUtils/httpdownloader.cpp \
         Utils/filemanager.cpp \
         Utils/log.cpp \
+        Utils/timemanager.cpp \
         main.cpp \
         mainwindow.cpp
 
 HEADERS += \
+        HttpUtils/httpdownloader.h \
         Utils/filemanager.h \
         Utils/log.h \
+        Utils/timemanager.h \
         mainwindow.h
 
 FORMS += \

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QScreen>
+#include <QKeyEvent>
 
 namespace Ui {
 class MainWindow;
@@ -22,6 +23,9 @@ public:
 
     // 初始化
     void Init();
+
+    // 键盘快捷键重写
+    void keyReleaseEvent(QKeyEvent *event);
 
 public slots:
     // 截取全图
