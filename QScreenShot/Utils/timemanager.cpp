@@ -3,6 +3,8 @@
 
 
 namespace TimeManager {
+
+// 得到当前时间字符串
 QString GetCurrentTimeStr()
 {
     QDateTime current_date_time =QDateTime::currentDateTime();

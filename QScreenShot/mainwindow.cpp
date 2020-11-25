@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    m_bScreenCut = false;
     Init();
     InitSlots();
 }
@@ -25,17 +26,18 @@ MainWindow::~MainWindow()
 void MainWindow::InitSlots()
 {
     QObject::connect(ui->btn_ScreenAll,SIGNAL(clicked()),this,SLOT(Slots_ScreenAll()));
+    QObject::connect(ui->btn_ScreenCut,SIGNAL(clicked()),this,SLOT(Slots_ScreenCut()));
 }
 
 void MainWindow::Init()
 {
-    Log::GetInstace().SetLogName("sas",true);
-    Log::GetInstace().WriteLog("12212");
-    Log::GetInstace().WriteLog("12sdaa212");
+    Log::GetInstace().SetLogName("QScreenCut",true);
+    Log::GetInstace().WriteLog("--------LogInit----------");
 }
 
 void MainWindow::Slots_ScreenAll()
 {
+    Log::GetInstace().WriteLog("-------截取全图--------",LOGSTATE::COMMON,true);
     QWindow * myScreenWindow = windowHandle();
     QScreen * myScreen =myScreenWindow->screen();
     QPixmap pixmap = myScreen->grabWindow(0);
@@ -76,3 +78,25 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
       }
       return QMainWindow::keyReleaseEvent(event);
 }
+
+void MainWindow::Slots_ScreenCut()
+{
+    // 开启截屏功能
+    m_bScreenCut = true;
+}
+
+void MainWindow::mousePressEvent(QMouseEvent *event)
+{
+    // 左键事件
+    if(event->button() == Qt::LeftButton)
+    {
+        // 开启截图功能
+        if(m_bScreenCut)
+        {
+            Log::GetInstace().WriteLog("-------开始截图--------",LOGSTATE::COMMON,true);
+        }
+    }
+    return QMainWindow::mousePressEvent(event);
+}
+
+

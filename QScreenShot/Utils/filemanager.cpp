@@ -16,4 +16,9 @@ bool DeleteFile(QString& strFileName)
     return file.remove();
 }
 
+bool CreateFolder(QString& strFolderPath)
+{
+    return true;
+}
+
 }

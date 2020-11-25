@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QScreen>
 #include <QKeyEvent>
+#include <QRect>
 
 namespace Ui {
 class MainWindow;
@@ -27,12 +28,19 @@ public:
     // 键盘快捷键重写
     void keyReleaseEvent(QKeyEvent *event);
 
+    // 鼠标按压事件
+    void mousePressEvent(QMouseEvent * event);
+
 public slots:
     // 截取全图
     void Slots_ScreenAll();
+    // 部分截图
+    void Slots_ScreenCut();
 
 private:
     Ui::MainWindow *ui;
+    bool m_bScreenCut;//截图功能
+    QRect m_ScreenRect; // 截图坐标
 };
 
 #endif // MAINWINDOW_H

@@ -8,5 +8,5 @@
 namespace FileManager {
     void CreateFile(QString& strFileName);
     bool DeleteFile(QString& strFileName);
-
+    bool CreateFolder(QString& strFolderPath);
 }
