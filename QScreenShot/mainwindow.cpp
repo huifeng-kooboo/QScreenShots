@@ -52,7 +52,7 @@ void MainWindow::Slots_ScreenAll()
         bool bSave = pixmap.save(strSavePath);
         if(bSave)
         {
-            QMessageBox::information(this,"Save","Path:"+strSavePath,QMessageBox::Yes);
+            QMessageBox::information(this,"Save","PhotoPath:"+strSavePath,QMessageBox::Yes);
         }
     }
 }
@@ -83,6 +83,8 @@ void MainWindow::Slots_ScreenCut()
 {
     // 开启截屏功能
     m_bScreenCut = true;
+    // 设置鼠标跟踪
+    setMouseTracking(true);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
@@ -90,13 +92,32 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     // 左键事件
     if(event->button() == Qt::LeftButton)
     {
-        // 开启截图功能
+        //截图功能开始
         if(m_bScreenCut)
         {
             Log::GetInstace().WriteLog("-------开始截图--------",LOGSTATE::COMMON,true);
+            m_beginPos = event->pos();
         }
     }
+    if(event->button() == Qt::RightButton)
+    {
+        m_bScreenCut = false;
+    }
     return QMainWindow::mousePressEvent(event);
+}
+
+void MainWindow::mouseReleaseEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+        m_bScreenCut = false;
+    }
+    return QMainWindow::mouseReleaseEvent(event);
+}
+
+void MainWindow::mouseMoveEvent(QMouseEvent *event)
+{
+   return QMainWindow::mouseMoveEvent(event);
 }
 
 
