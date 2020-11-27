@@ -3,3 +3,8 @@
 #define HTTPDOWNLOADER_H
 
 #endif // HTTPDOWNLOADER_H
+
+class HttpDownloader
+{
+    
+};

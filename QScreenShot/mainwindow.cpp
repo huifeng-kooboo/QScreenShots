@@ -3,9 +3,10 @@
 
 #include <QWindow>
 #include <QLabel>
+#include <QApplication>
+#include <QDesktopWidget>
 #include <qfiledialog.h>
 #include "Utils/log.h"
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -13,6 +14,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     m_bScreenCut = false;
+    this->setMouseTracking(true);
+    // 实现无边框
+    this->setWindowFlags(Qt::FramelessWindowHint);
+    setMinimumSize(200,200);
+    setWindowState(Qt::WindowActive);
     Init();
     InitSlots();
 }
@@ -41,6 +47,7 @@ void MainWindow::Slots_ScreenAll()
     QWindow * myScreenWindow = windowHandle();
     QScreen * myScreen =myScreenWindow->screen();
     QPixmap pixmap = myScreen->grabWindow(0);
+    // 获取保存路径
     QString strFolderPath = QFileDialog::getExistingDirectory(this,"Choose To Save File","/");
     QString strSavePath = "";
     if(strFolderPath.isEmpty())
@@ -62,62 +69,116 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
     // 设置快捷键方式 Ctrl+指定按键
     // Ctrl+Shift+T 截取全屏
+    // Ctrl+Shift+Y 自定义截图
     Qt::KeyboardModifiers modi = event->modifiers();
-      if(modi & Qt::ControlModifier && Qt::ShiftModifier)
-      {//ctrl键按下
-          int key = event->key();
-          switch(key)
-          {
-          case Qt::Key_T:
-          {
-              Slots_ScreenAll();
-          }
-          default:
-              break;
-          }
-      }
-      return QMainWindow::keyReleaseEvent(event);
+    if(modi & Qt::ControlModifier && Qt::ShiftModifier)
+    {
+        int key = event->key();
+        switch(key)
+        {
+        case Qt::Key_T:
+        {
+            Slots_ScreenAll();
+            break;
+        }
+        case Qt::Key_Y:
+        {
+            Slots_ScreenCut();
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    return QMainWindow::keyReleaseEvent(event);
 }
 
 void MainWindow::Slots_ScreenCut()
 {
-    // 开启截屏功能
-    m_bScreenCut = true;
     // 设置鼠标跟踪
     setMouseTracking(true);
+    m_bScreenCut = true;
+    window()->showMinimized();
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
-    // 左键事件
     if(event->button() == Qt::LeftButton)
     {
-        //截图功能开始
-        if(m_bScreenCut)
-        {
-            Log::GetInstace().WriteLog("-------开始截图--------",LOGSTATE::COMMON,true);
-            m_beginPos = event->pos();
-        }
-    }
-    if(event->button() == Qt::RightButton)
-    {
-        m_bScreenCut = false;
+        m_bPressed = true;
+        m_movePoint = event->pos();
     }
     return QMainWindow::mousePressEvent(event);
 }
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
-    if(event->button() == Qt::LeftButton)
-    {
-        m_bScreenCut = false;
-    }
+    m_bPressed = false;
     return QMainWindow::mouseReleaseEvent(event);
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *event)
 {
-   return QMainWindow::mouseMoveEvent(event);
+    if(m_bPressed)
+    {
+        move(event->pos()  + pos()- m_movePoint);
+    }
+    return QMainWindow::mouseMoveEvent(event);
 }
 
+
+QRect MainWindow::getRect(const QPoint &beginPoint, const QPoint &endPoint)
+{
+    int x, y, width, height;
+    width = qAbs(beginPoint.x() - endPoint.x());
+    height = qAbs(beginPoint.y() - endPoint.y());
+    x = beginPoint.x() < endPoint.x() ? beginPoint.x() : endPoint.x();
+    y = beginPoint.y() < endPoint.y() ? beginPoint.y() : endPoint.y();
+
+    QRect selectedRect = QRect(x, y, width, height);
+    // 避免宽或高为零时拷贝截图有误;
+    // 可以看QQ截图，当选取截图宽或高为零时默认为2;
+    if (selectedRect.width() == 0)
+    {
+        selectedRect.setWidth(1);
+    }
+    if (selectedRect.height() == 0)
+    {
+        selectedRect.setHeight(1);
+    }
+
+    return selectedRect;
+}
+
+void MainWindow::paintEvent(QPaintEvent *event)
+{
+    //    if(m_bScreenCut == false)
+    //    {
+    //        m_painter.begin(this);
+    //        QPen pen;
+    //        pen.setWidth(5);
+    //        pen.setColor(QColor(Qt::GlobalColor::red));
+    //        pen.setStyle(Qt::DashDotLine);
+    //        m_painter.setPen(pen);
+    //        m_painter.drawLine(50,50,150,50);
+    //        m_painter.drawLine(50,50,50,150);
+    //        //创建画刷
+    //        QBrush brush;
+    //        brush.setColor(Qt::black);
+    //        brush.setStyle(Qt::Dense6Pattern);
+
+    //        m_painter.setBrush(brush);
+
+    //        // 画矩形；
+    //        m_painter.drawRect(150,150,100,50);
+
+    //        //画圆形
+    //        m_painter.drawEllipse(250,250,40,40);
+    //        m_painter.end();
+    //    }
+    //    else {
+
+    //    }
+    return QMainWindow::paintEvent(event);
+}
 

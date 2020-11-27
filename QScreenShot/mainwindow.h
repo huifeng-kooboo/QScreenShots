@@ -6,6 +6,7 @@
 #include <QScreen>
 #include <QKeyEvent>
 #include <QRect>
+#include <QPainter>
 
 namespace Ui {
 class MainWindow;
@@ -34,6 +35,10 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
     // 鼠标移动
     void mouseMoveEvent(QMouseEvent * event);
+    // 绘制界面
+    void paintEvent(QPaintEvent * event);
+
+    QRect getRect(const QPoint &beginPoint, const QPoint &endPoint);
 
 public slots:
     // 截取全图
@@ -44,8 +49,12 @@ public slots:
 private:
     Ui::MainWindow *ui;
     bool m_bScreenCut;//截图功能
-    QRect m_ScreenRect; // 截图坐标
     QPoint m_beginPos; // 初始点
+    QPoint m_endPos; // 结束点
+    QPainter m_painter; // 画笔
+    // 无边框可移动
+    bool m_bPressed; // 判断是否按压
+    QPoint m_movePoint; // 移动点
 };
 
 #endif // MAINWINDOW_H

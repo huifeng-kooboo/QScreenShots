@@ -25,6 +25,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG += c++11
 
 SOURCES += \
+        DoWidget/screenwidget.cpp \
         HttpUtils/httpdownloader.cpp \
         Utils/filemanager.cpp \
         Utils/log.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
         mainwindow.cpp
 
 HEADERS += \
+        DoWidget/screenwidget.h \
         HttpUtils/httpdownloader.h \
         Utils/filemanager.h \
         Utils/log.h \
