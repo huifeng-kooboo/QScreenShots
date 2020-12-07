@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>200</width>
-    <height>200</height>
+    <width>397</width>
+    <height>330</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,20 +17,13 @@
    <widget class="QWidget" name="verticalLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>30</x>
-      <y>50</y>
+      <x>10</x>
+      <y>10</y>
       <width>131</width>
       <height>86</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QPushButton" name="btn_ScreenAll">
-       <property name="text">
-        <string>全屏</string>
-       </property>
-      </widget>
-     </item>
      <item>
       <widget class="QPushButton" name="btn_ScreenCut">
        <property name="text">
@@ -64,7 +57,53 @@
        </property>
       </spacer>
      </item>
+     <item>
+      <widget class="QPushButton" name="btn_ScreenAll">
+       <property name="text">
+        <string>全屏</string>
+       </property>
+      </widget>
+     </item>
     </layout>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_2">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>10</y>
+      <width>111</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QToolButton" name="toolBtn_ShareClient">
+       <property name="text">
+        <string>共享内存客户端</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QToolButton" name="toolBtn_ShareServer">
+       <property name="text">
+        <string>共享内存服务端</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="lbl_ShowContext">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>110</y>
+      <width>54</width>
+      <height>12</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
    </widget>
   </widget>
   <widget class="QToolBar" name="mainToolBar">

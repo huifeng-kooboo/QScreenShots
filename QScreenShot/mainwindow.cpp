@@ -8,6 +8,11 @@
 #include <qfiledialog.h>
 #include "Utils/log.h"
 
+struct UserDemo : QObjectUserData {
+    int nID;  // ID
+    QString strName;  // 用户名
+};
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -17,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setMouseTracking(true);
     // 实现无边框
     this->setWindowFlags(Qt::FramelessWindowHint);
-    setMinimumSize(200,200);
+    setMinimumSize(400,400);
     setWindowState(Qt::WindowActive);
     Init();
     InitSlots();
@@ -33,12 +38,15 @@ void MainWindow::InitSlots()
 {
     QObject::connect(ui->btn_ScreenAll,SIGNAL(clicked()),this,SLOT(Slots_ScreenAll()));
     QObject::connect(ui->btn_ScreenCut,SIGNAL(clicked()),this,SLOT(Slots_ScreenCut()));
+    QObject::connect(ui->toolBtn_ShareClient,SIGNAL(clicked()),this,SLOT(Slots_ShareMemoryClient()));
+    QObject::connect(ui->toolBtn_ShareServer,SIGNAL(clicked()),this,SLOT(Slots_ShareMemoryServer()));
 }
 
 void MainWindow::Init()
 {
     Log::GetInstace().SetLogName("QScreenCut",true);
     Log::GetInstace().WriteLog("--------LogInit----------");
+    m_ShareMemory = nullptr;
 }
 
 void MainWindow::Slots_ScreenAll()
@@ -97,8 +105,47 @@ void MainWindow::Slots_ScreenCut()
 {
     // 设置鼠标跟踪
     setMouseTracking(true);
-    m_bScreenCut = true;
+    // 最小化
     window()->showMinimized();
+    // Qt获取整张屏幕
+    // 1. 获取整张图片
+    QPixmap pixmap = QPixmap::grabWindow(QApplication::desktop()->winId());
+    m_WinPixMap = pixmap;
+    m_width = pixmap.width();
+    m_height = pixmap.height();
+    m_bScreenCut = true;
+    // 2. 显示覆盖整张屏幕
+
+}
+
+void MainWindow::Slots_ShareMemoryClient()
+{
+    QSharedMemory sp;
+    sp.setKey("KeyWord");
+    sp.lock();
+    QString strpp;
+    strpp.append((QString*)(sp.data()));
+    Log::GetInstace().WriteLog(strpp);
+    sp.unlock();
+    sp.detach();
+}
+
+void MainWindow::Slots_ShareMemoryServer()
+{
+    if(m_ShareMemory == nullptr)
+    {
+        //Log::GetInstace().WriteLog("初始化共享内存");
+        m_ShareMemory = new QSharedMemory(this);
+    }
+    m_ShareMemory->setKey("KeyWord");
+    m_ShareMemory->create(2048);
+    // 加载数据
+    m_ShareMemory->lock(); //上锁
+    char * to = (char*)(m_ShareMemory->data());
+    QString data_ = "sasaasxxaqvaax";
+    memcpy(to,data_.data(),m_ShareMemory->size());
+    ShowContext("SetKey:KeyWord");
+    m_ShareMemory->unlock();
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *event)
@@ -152,33 +199,20 @@ QRect MainWindow::getRect(const QPoint &beginPoint, const QPoint &endPoint)
 
 void MainWindow::paintEvent(QPaintEvent *event)
 {
-    //    if(m_bScreenCut == false)
-    //    {
-    //        m_painter.begin(this);
-    //        QPen pen;
-    //        pen.setWidth(5);
-    //        pen.setColor(QColor(Qt::GlobalColor::red));
-    //        pen.setStyle(Qt::DashDotLine);
-    //        m_painter.setPen(pen);
-    //        m_painter.drawLine(50,50,150,50);
-    //        m_painter.drawLine(50,50,50,150);
-    //        //创建画刷
-    //        QBrush brush;
-    //        brush.setColor(Qt::black);
-    //        brush.setStyle(Qt::Dense6Pattern);
+    m_painter.begin(this);
+    if(m_bScreenCut == true)
+    {
+        ui->btn_ScreenAll->setVisible(false);
+        ui->btn_ScreenCut->setVisible(false);
+        setFixedSize(m_width,m_height);
+        m_painter.drawPixmap(0,0,m_WinPixMap);
+    }
+    m_painter.end();
 
-    //        m_painter.setBrush(brush);
-
-    //        // 画矩形；
-    //        m_painter.drawRect(150,150,100,50);
-
-    //        //画圆形
-    //        m_painter.drawEllipse(250,250,40,40);
-    //        m_painter.end();
-    //    }
-    //    else {
-
-    //    }
     return QMainWindow::paintEvent(event);
 }
 
+void MainWindow::ShowContext(const QString &strContent)
+{
+    ui->lbl_ShowContext->setText(strContent);
+}

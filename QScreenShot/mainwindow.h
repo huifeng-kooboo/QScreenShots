@@ -7,6 +7,7 @@
 #include <QKeyEvent>
 #include <QRect>
 #include <QPainter>
+#include <QSharedMemory>
 
 namespace Ui {
 class MainWindow;
@@ -40,12 +41,16 @@ public:
 
     QRect getRect(const QPoint &beginPoint, const QPoint &endPoint);
 
+    void ShowContext(const QString& strContent);
+
 public slots:
     // 截取全图
     void Slots_ScreenAll();
     // 部分截图
     void Slots_ScreenCut();
-
+    // 槽函数之共享内存服务端
+    void Slots_ShareMemoryServer();
+    void Slots_ShareMemoryClient();
 private:
     Ui::MainWindow *ui;
     bool m_bScreenCut;//截图功能
@@ -55,6 +60,10 @@ private:
     // 无边框可移动
     bool m_bPressed; // 判断是否按压
     QPoint m_movePoint; // 移动点
+    QPixmap m_WinPixMap;  // 整个桌面的---
+    int m_width;
+    int m_height;
+    QSharedMemory* m_ShareMemory;
 };
 
 #endif // MAINWINDOW_H
